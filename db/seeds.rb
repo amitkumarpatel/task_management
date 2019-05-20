@@ -7,5 +7,13 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 user = User.create!(:name => "Admin User", :email => "admin@gmail.com", :password => '123456', :password_confirmation => '123456', :confirmed_at => DateTime.now, role: 0)
 (1..10).each do |i|
-  user = User.create!(:name => "John Doe_#{i}", :email => "john#{i}@gmail.com", :password => '123456', :password_confirmation => '123456', :confirmed_at => DateTime.now, role: 1)
+  User.create!(:name => "John Doe_#{i}", :email => "john#{i}@gmail.com", :password => '123456', :password_confirmation => '123456', :confirmed_at => DateTime.now, role: 1)
+end
+(1..5).each do |i|
+  Project.create(:name => "project#{i}")
+end
+(1..10).each do |i|
+	(1..5).each do |j|
+		Todo.create(:title => "tododev#{i}p#{j}", status: 0, project_id: j, user_id: i)
+	end
 end

@@ -1,18 +1,18 @@
 class ProjectsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :dashboard]
+  before_action :authenticate_user!, except: [:dashboard]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
-  load_and_authorize_resource :except => [:edit_status, :update_status]
+  load_and_authorize_resource :project, :except => [:edit_status, :update_status]
 
   
   def dashboard
-    if current_user.role?(:admin)
+    if current_user.present? && current_user.role?(:admin)
       @todos = Todo.select("todos.title, todos.status, users.name").joins(:user).where("true").group_by(&:status)#.group("todos.status,todos.title")#.references(:todos)
       @devs = User.where(role: 1).select(:name).order(:id)
       @todos_p = Todo.select("todos.title, todos.status, projects.name").joins(:project).where("true").group_by(&:status)
       @projects = Project.where("true").select(:name, :id).order(:id)
       project_id = params[:project].present? ? params[:project] : 1
       @graph_data = Todo.includes(:project).where(project_id: project_id).select("status, project_id").group_by(&:status).collect{|k , v | [k, v.count]}
-    else
+    elsif current_user.present? && current_user.role?(:developer)
       @todos = Todo.where(user_id: current_user.id)
     end
   end

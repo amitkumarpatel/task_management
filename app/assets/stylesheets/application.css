@@ -22,3 +22,12 @@ ul.menu-items li {
 	padding:5px;
 	display: inline;
 }
+ul.todo-listing {
+	list-style: none;	
+}
+table, th, td {
+    border: 1px dotted black;
+}
+div.project-select label {
+	display: inline;
+}

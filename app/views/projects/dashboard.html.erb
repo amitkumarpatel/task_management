@@ -1,6 +1,7 @@
 <p id="notice"><%= notice %></p>
 
-<% if current_user.role?(:admin) %>
+<% if current_user.present? && current_user.role?(:admin) %>
+ 
   <h1>Projects</h1>
 
   <table>
@@ -22,7 +23,15 @@
           <% columns.group_by(&:name).each do |dev, todo| %>
             <% if dev == dev_name %>
               <% print = true %>
-              <td> <%= todo.collect(&:title).join(",")  if dev ==  dev_name %></td>
+              <td> 
+                <% if dev ==  dev_name %>
+                  <ul class="todo-listing">
+                    <% todo.collect(&:title).each do |title| %>
+                    <li><%= title %></li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </td>
             <% end %>  
           <% end %>  
           <% if print == false %>  
@@ -34,8 +43,7 @@
       <% end %>
     </tbody>
   </table>
-  <br>
-
+  <br/>
   <table>
     <thead>
       <tr>
@@ -55,7 +63,15 @@
           <% columns.group_by(&:name).each do |project, todo| %>
             <% if project == project_name %>
               <% print = true %>
-              <td> <%= todo.collect(&:title).join(",")  if project ==  project_name %></td>
+              <td>
+                <% if project ==  project_name %>
+                  <ul class="todo-listing">
+                    <% todo.collect(&:title).each do |title| %>
+                      <li><%= title %></li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </td>
             <% end %>  
           <% end %>  
           <% if print == false %>  
@@ -67,16 +83,47 @@
       <% end %>
     </tbody>
   </table>
-
+<br/><br/>
   <!--Div that will hold the pie chart-->
-  <%= select_tag "project_id" , options_for_select(@projects.collect{|p| [p.name, p.id]}, selected: params[:project]) %>
+<div>
+  <div>Select the project from select box to view the pie chart between status and its count for that project </div>
+  <div class="project-select">
+    <%= label_tag "project_id", "Select Project" %>:
+    <%= select_tag "project_id" , options_for_select(@projects.collect{|p| [p.name, p.id]}, selected: params[:project]) %>
+  </div>
   <div id="chart_div"></div>
   <%= link_to 'New Project', new_project_path %>
-  <style>
-    table, tr {
-    border: 1px solid black;
-  }
-  </style>
+</div>
+ <% elsif current_user.present? && current_user.role?(:developer) %>
+
+<h1>Todos</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Status</th>
+      <th colspan="3">Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if @todos.present? %>
+      <% @todos.each do |todo| %>
+        <tr>
+          <td><%= todo.title %></td>
+          <td><%= todo.status %></td>
+          <td><%= link_to 'Edit Status', edit_status_project_path(todo.id) %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr><td colspan="3">Currently no Todo is assigned to you</td> </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br/>
+<% end %> 
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript">
@@ -113,29 +160,3 @@
       window.location.href = window.location.href.split('?')[0] + "?project="+ $(this).val() ;
     });
   </script>
-<% else %>
-
-<h1>Todos</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Status</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @todos.each do |todo| %>
-      <tr>
-        <td><%= todo.title %></td>
-        <td><%= todo.status %></td>
-        <td><%= link_to 'Edit Status', edit_status_project_path(todo.id) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-<% end %> 

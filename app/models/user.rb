@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :todos
   has_many :projects, through: :todos
          
+  validates :name,:email, presence: true
+
   ROLES = %i[admin developer]
 
 	def role?(role_name)
