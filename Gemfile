@@ -62,3 +62,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise'
 gem 'cancancan'
+gem 'jquery-rails'
+# gem for nested for attributes
+gem "cocoon"

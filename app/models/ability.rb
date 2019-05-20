@@ -4,14 +4,15 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    can :read, Project, public: true
+    user ||= User.new
 
-    if user.present?  # additional permissions for logged in users (they can read their own posts)
-      can :read, Project, user_id: user.id
-
-      if user.admin?  # additional permissions for administrators
-        can :read, project
-      end
+    if user.role?(:admin)
+      can :manage, :all
+    elsif user.role?(:developer)  # additional permissions for logged in users (they can read their own posts)
+      can :read, Project
+      can :dashboard, Project
+      can :edit_status, Project
+      can :update_status, Project
     end
 
     # def manager

@@ -16,6 +16,14 @@
     <%= form.text_field :name %>
   </div>
 
+  <%= form.fields_for :todos do |todo_form| %>
+    <%= render 'todo_fields', :f => todo_form %>
+  <% end %>
+
+  <div class='links'>
+    <%= link_to_add_association 'add todo', form, :todos %>
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>
