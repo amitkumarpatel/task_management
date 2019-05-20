@@ -4,7 +4,7 @@
     </div>
 
     <div class="field">
-        Todo User: <%= f.select :user_id, options_for_select(User.where(role: 1).select("id, name").collect{|user| [user.name, user.id]}), prompt: "Select User" %>
+        Todo User: <%= f.select :user_id, options_for_select(User.where(role: 1).select("id, name").collect{|user| [user.name, user.id]}, selected: f.object.area_id), prompt: "Select User" %>
     </div>
 
     <div class="field">
